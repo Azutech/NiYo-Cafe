@@ -2,7 +2,7 @@
   "name": "ni-yo-project",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Azutech <azunna.onugha@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -72,5 +72,7 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/Azutech/NiYo-Cafe.git"
 }

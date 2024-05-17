@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsEmail, IsString, IsEnum, IsDate } from 'class-validator';
 import { IsEmailDomain } from 'src/utils/emailValidators';
 
-
 enum Gender {
   Male = 'Male',
   Female = 'Female',
@@ -13,8 +12,15 @@ export class CreateUserDto {
   fullName: string;
 
   @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @IsNotEmpty()
   @IsEmail()
-  @IsEmailDomain({ message : 'Email domain is not allowed. Allowed domains are: .com, .co.uk, .ng, .org, co.za'})
+  @IsEmailDomain({
+    message:
+      'Email domain is not allowed. Allowed domains are: .com, .co.uk, .ng, .org, co.za',
+  })
   email: string;
 
   @IsNotEmpty()
@@ -25,4 +31,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsDate()
   dateOfBirth: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  status: string;
+
+  @IsNotEmpty()
+  @IsString()
+  verificationCode: string;
 }
