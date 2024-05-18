@@ -1,6 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+enum Status {
+  Active = 'Active',
+  Pending = 'Pending',
+}
+
 @Schema()
 export class User extends Document {
   @Prop({ required: true })
@@ -11,8 +16,8 @@ export class User extends Document {
   password: string;
   @Prop({ required: true })
   dateOfBirth: Date;
-  @Prop({ required: true })
-  status: string;
+  @Prop({ default: Status.Pending, enum: Status })
+  status: Status;
   @Prop({ required: true })
   verificationCode: string;
   @Prop({ required: true })

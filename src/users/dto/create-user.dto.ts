@@ -32,11 +32,4 @@ export class CreateUserDto {
   @IsDate()
   dateOfBirth: Date;
 
-  @IsNotEmpty()
-  @IsString()
-  status: string;
-
-  @IsNotEmpty()
-  @IsString()
-  verificationCode: string;
 }
