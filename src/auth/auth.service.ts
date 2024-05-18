@@ -6,6 +6,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PasswordService } from 'src/utils/passwordService';
 import { UsersService } from 'src/users/users.service';
+import { LoginUserDto } from 'src/users/dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private userService: UsersService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async register(createUserDto: CreateUserDto): Promise<User> {
     try {
       const { fullName, email, password, gender } = createUserDto;
 
@@ -57,5 +58,29 @@ export class AuthService {
       // Rethrow the error to propagate it
       throw error;
     }
+  }
+
+  async login(logindto: LoginUserDto): Promise<User> {
+    const { email, password } = logindto
+
+    const findUser = await this.userService.findByEmail(email);
+    if (!findUser) {
+      throw new HttpException('Email does not exist', HttpStatus.BAD_REQUEST);
+    }
+
+    if (findUser.status === 'Pending') {
+        throw new HttpException("User is not Active", HttpStatus.UNAUTHORIZED)
+    }
+
+    const isPasswordValid = await this.passwordService.comparePasswords(
+        password,
+        findUser.password, // Assuming the user object has a password property
+      );
+    
+      if (!isPasswordValid) {
+        throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
+      }
+    
+      return findUser;
   }
 }
