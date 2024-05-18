@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-enum Status {
+export enum Status {
   Active = 'Active',
   Pending = 'Pending',
 }
