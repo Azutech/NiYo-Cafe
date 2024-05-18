@@ -1,43 +1,61 @@
-import { Injectable, HttpException, HttpStatus} from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, Status } from 'src/users/model/users';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { PasswordService } from 'src/utils/passwordService';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  [x: string]: any;
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private passwordService: PasswordService, // Correctly inject PasswordService
+    private passwordService: PasswordService,
+    private userService: UsersService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { fullName, email, password, gender, dateOfBirth } = createUserDto;
+    try {
+      const { fullName, email, password, gender } = createUserDto;
 
-    const existingUser = await this.userService.findByEmail(email);
-    if (existingUser) {
-      throw new HttpException('Email is already taken', HttpStatus.BAD_REQUEST);
+      const existingUser = await this.userService.findByEmail(email);
+      if (existingUser) {
+        throw new HttpException('Email is already taken', HttpStatus.CONFLICT);
+      }
+
+      const hashedPassword = await this.passwordService.hashPassword(password);
+
+      const verificationCode = uuidv4();
+
+      const user = new this.userModel({
+        ...createUserDto,
+        password: hashedPassword,
+        status: Status.Pending,
+        verificationCode,
+      });
+
+      // Save the user to the database
+      const createdUser = await user.save();
+
+      if (!createdUser) {
+        throw new HttpException(
+          'User could not be created',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Here you would send the verification email with the token
+      // For demonstration, we just return the user with the token
+      return createdUser;
+    } catch (error) {
+      // Log error message and stack trace
+      this.logger.error(error.message, error.stack);
+
+      // Rethrow the error to propagate it
+      throw error;
     }
-
-    const hashedPassword = await this.passwordService.hashPassword(password);
-
-    const verificationToken = uuidv4();
-
-    const user = new this.userModel({
-     ...createUserDto,
-      password: hashedPassword,
-      status: Status.Pending,
-      verificationToken,
-    });
-
-    // Save the user to the database
-    const createdUser = await user.save();
-
-    // Here you would send the verification email with the token
-    // For demonstration, we just return the user with the token
-    return createdUser;
   }
 }

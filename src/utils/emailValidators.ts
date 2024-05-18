@@ -1,37 +1,24 @@
 import {
-  registerDecorator,
-  ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
 
-@ValidatorConstraint({ async: false })
-export class IsEmailDomainConstraint implements ValidatorConstraintInterface {
+@ValidatorConstraint({ name: 'isDomain', async: false })
+export class IsDomainConstraint implements ValidatorConstraintInterface {
   validate(email: string, args: ValidationArguments) {
-    // Define the allowed domains
-    const allowedDomains = ['.com', '.co.uk', '.ng', '.org', 'co.za'];
-
-    // Extract the domain from the email
-    const emailDomain = email.split('@')[1];
-
-    // Check if the email domain is in the list of allowed domains
-    return allowedDomains.includes(emailDomain);
+    const domains = args.constraints as string[]; // Extract the array of allowed domains
+    const emailParts = email.split('@');
+    if (emailParts.length !== 2) {
+      return false; // Invalid email format
+    }
+    const [, emailDomain] = emailParts;
+    return domains.some((domain) => emailDomain.endsWith(domain)); // Check if email domain ends with any allowed domain
   }
 
   defaultMessage(args: ValidationArguments) {
-    return 'Email domain is not allowed. Allowed domains are: .com, .co.uk, .ng, .org, co.za';
+    const domains = args.constraints as string[]; // Extract the array of allowed domains
+    const allowedDomains = domains.join(', '); // Create a comma-separated list of allowed domains
+    return `Email domain must be one of: ${allowedDomains}`;
   }
-}
-
-export function IsEmailDomain(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
-    registerDecorator({
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions,
-      constraints: [],
-      validator: IsEmailDomainConstraint,
-    });
-  };
 }

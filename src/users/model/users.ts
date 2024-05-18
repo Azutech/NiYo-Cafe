@@ -14,8 +14,6 @@ export class User extends Document {
   email: string;
   @Prop({ required: true })
   password: string;
-  @Prop({ required: true })
-  dateOfBirth: Date;
   @Prop({ default: Status.Pending, enum: Status })
   status: Status;
   @Prop({ required: true })
