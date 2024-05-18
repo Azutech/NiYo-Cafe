@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, IsString, IsEnum, IsDate } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, IsEnum, IsDate, Matches} from 'class-validator';
 import { IsEmailDomain } from 'src/utils/emailValidators';
 
 enum Gender {
@@ -13,6 +13,9 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
+    message: 'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+  })
   password: string;
 
   @IsNotEmpty()
