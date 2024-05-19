@@ -21,6 +21,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async generateToken(user: User): Promise<string> {
+    const payload = { sub: user._id, username: user.email };
+    return this.jwtService.sign(payload);
+  }
+
   async register(createUserDto: CreateUserDto): Promise<User> {
     try {
       const { fullName, email, password, gender } = createUserDto;
