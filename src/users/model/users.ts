@@ -20,6 +20,8 @@ export class User extends Document {
   verificationCode: string;
   @Prop({ required: true })
   gender: string;
+  @Prop({ required: true })
+  isVerified: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

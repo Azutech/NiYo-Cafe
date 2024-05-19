@@ -1,6 +1,10 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as jwt from 'jsonwebtoken';
+import {
+  Injectable,
+  HttpException,
+  NotFoundException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, Status } from 'src/users/model/users';
@@ -9,6 +13,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { PasswordService } from 'src/utils/passwordService';
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
+import { JWTService } from 'src/jwt/jwt.token';
+import { LoginResponseDto } from 'src/users/dto/loginResponse';
+import { ActivationResponse } from '../clientresponse/clientResponse';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +25,8 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private passwordService: PasswordService,
     private userService: UsersService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JWTService,
   ) {}
-
-  async generateToken(user: User): Promise<string> {
-    const payload = { sub: user._id, username: user.email };
-    return this.jwtService.sign(payload);
-  }
 
   async register(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -44,6 +46,7 @@ export class AuthService {
         password: hashedPassword,
         status: Status.Pending,
         verificationCode,
+        isVerified: false,
       });
 
       // Save the user to the database
@@ -68,7 +71,7 @@ export class AuthService {
     }
   }
 
-  async login(logindto: LoginUserDto): Promise<User> {
+  async login(logindto: LoginUserDto): Promise<LoginResponseDto> {
     try {
       const { email, password } = logindto;
 
@@ -87,10 +90,16 @@ export class AuthService {
       );
 
       if (!isPasswordValid) {
-        throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
       }
 
-      return findUser;
+      const token = await this.jwtService.generateToken(findUser);
+
+      const user: LoginResponseDto = {
+        token: token,
+        email: findUser.email,
+      };
+      return user;
     } catch (err) {
       this.logger.error(err.message, err.stack);
 
@@ -99,12 +108,36 @@ export class AuthService {
     }
   }
 
-  async verifyUser(code: string): Promise<User> {
-    const findUser = await this.userService.findByEmail(code);
-    if (!findUser) {
-      throw new HttpException('Email does not exist', HttpStatus.BAD_REQUEST);
-    }
+  async accountActivation(code: string): Promise<ActivationResponse> {
+    try {
+      const findCode = await this.userService.findByCode(code);
+      if (!findCode) {
+        throw new NotFoundException('Verification Code not found');
+      }
 
-    return findUser;
+      const verifiedUser = await this.userService.activateAccount(
+        findCode?._id,
+        findCode?.status,
+        code,
+        true,
+      );
+
+      if (!verifiedUser) {
+        throw new HttpException(
+          'Unable to Activate account',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return {
+        message: 'Account activated successfully',
+        user: {
+          isVerified: true,
+          status: 'Active',
+        },
+      };
+    } catch (err) {
+      this.logger.error(err?.message, err?.stack);
+    }
   }
 }
