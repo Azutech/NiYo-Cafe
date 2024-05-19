@@ -18,7 +18,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private passwordService: PasswordService,
     private userService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
@@ -94,16 +94,12 @@ export class AuthService {
     }
   }
 
-  async verifyUser(code : string) : Promise<User> {
-
+  async verifyUser(code: string): Promise<User> {
     const findUser = await this.userService.findByEmail(code);
     if (!findUser) {
       throw new HttpException('Email does not exist', HttpStatus.BAD_REQUEST);
     }
 
-    return findUser
-
+    return findUser;
   }
-
-
 }

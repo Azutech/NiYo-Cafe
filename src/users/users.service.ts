@@ -19,8 +19,8 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return this.userModel.findOne({ id }).exec();
   }
 
   async findByEmail(email: string): Promise<User | null> {
