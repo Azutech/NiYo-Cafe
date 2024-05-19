@@ -13,6 +13,6 @@ import { TaskService } from 'src/task/task.service';
 
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService, MongooseModule, ],
+  exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}

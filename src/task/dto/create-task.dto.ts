@@ -1,17 +1,4 @@
-import {
-  IsNotEmpty,
-  IsEmail,
-  IsString,
-  IsEnum,
-  IsBoolean,
-  Matches,
-  Validate,
-} from 'class-validator';
-
-enum Status {
-  Incomplete = 'Incomplete',
-  Finished = 'Finished',
-}
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
