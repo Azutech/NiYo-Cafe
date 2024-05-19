@@ -57,8 +57,8 @@ To contribute to the project, you can:
 
 ### Authentication
 
-- **Login**
+ **Login**
 
-- POST /auth/login logs the user in
+ POST /auth/login logs the user in
 
 ### Tasks
