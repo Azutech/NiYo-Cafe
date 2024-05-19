@@ -29,6 +29,12 @@ export class UsersService {
   async findByCode(verificationCode: string): Promise<User | null> {
     return this.userModel.findOne({ verificationCode }).exec();
   }
+  async activateAccount(id: string, status: string, verificationCode : string): Promise<User | null> {
+    return this.userModel.findByIdAndUpdate({_id : id}, 
+      { $set: { status: 'active' }, $unset: { verificationCode: 1 } }, // Remove the 'token' field
+			{ new: true },
+    )
+  }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
