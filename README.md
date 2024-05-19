@@ -39,9 +39,26 @@ This project is a Task Management API built with NestJS, Mongoose, and Socket.IO
     npm run start:dev
     ```
 
+## Contributing
+
+To contribute to the project, you can:
+
+- Fork the repository
+- Create a new branch: `git checkout -b feature-name`
+- Make your changes and commit them: `git commit -m "Add feature-name"`
+- Push to your branch: `git push origin feature-name`
+- Create a pull request
+
+
+## Hosted Link
+ -The app was deployed using the [render](https://render.com). Find the link [Here](https://niyo-cafe.onrender.com)
+
 ## Endpoints
 
 ### Authentication
 
 - **Login**
 
+- POST /auth/login logs the user in
+
+### Tasks
