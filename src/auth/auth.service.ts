@@ -1,4 +1,6 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as jwt from 'jsonwebtoken';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, Status } from 'src/users/model/users';
@@ -16,6 +18,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private passwordService: PasswordService,
     private userService: UsersService,
+    private readonly jwtService: JwtService
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
@@ -51,36 +54,56 @@ export class AuthService {
       // Here you would send the verification email with the token
       // For demonstration, we just return the user with the token
       return createdUser;
-    } catch (error) {
+    } catch (err) {
       // Log error message and stack trace
-      this.logger.error(error.message, error.stack);
+      this.logger.error(err.message, err.stack);
 
       // Rethrow the error to propagate it
-      throw error;
+      throw err;
     }
   }
 
   async login(logindto: LoginUserDto): Promise<User> {
-    const { email, password } = logindto
+    try {
+      const { email, password } = logindto;
 
-    const findUser = await this.userService.findByEmail(email);
+      const findUser = await this.userService.findByEmail(email);
+      if (!findUser) {
+        throw new HttpException('Email does not exist', HttpStatus.BAD_REQUEST);
+      }
+
+      if (findUser.status === 'Pending') {
+        throw new HttpException('User is not Active', HttpStatus.UNAUTHORIZED);
+      }
+
+      const isPasswordValid = await this.passwordService.comparePasswords(
+        password,
+        findUser.password, // Assuming the user object has a password property
+      );
+
+      if (!isPasswordValid) {
+        throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
+      }
+
+      return findUser;
+    } catch (err) {
+      this.logger.error(err.message, err.stack);
+
+      // Rethrow the error to propagate it
+      throw err;
+    }
+  }
+
+  async verifyUser(code : string) : Promise<User> {
+
+    const findUser = await this.userService.findByEmail(code);
     if (!findUser) {
       throw new HttpException('Email does not exist', HttpStatus.BAD_REQUEST);
     }
 
-    if (findUser.status === 'Pending') {
-        throw new HttpException("User is not Active", HttpStatus.UNAUTHORIZED)
-    }
+    return findUser
 
-    const isPasswordValid = await this.passwordService.comparePasswords(
-        password,
-        findUser.password, // Assuming the user object has a password property
-      );
-    
-      if (!isPasswordValid) {
-        throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
-      }
-    
-      return findUser;
   }
+
+
 }

@@ -47,5 +47,4 @@ export class CreateUserDto {
   @IsString()
   @IsEnum(Gender)
   gender: Gender;
-
 }

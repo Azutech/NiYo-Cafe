@@ -26,6 +26,9 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
   }
+  async findByCode(verificationCode: string): Promise<User | null> {
+    return this.userModel.findOne({ verificationCode }).exec();
+  }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;

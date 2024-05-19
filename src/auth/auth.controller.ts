@@ -20,7 +20,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async authenticate(@Body() loginDto: LoginUserDto) :Promise<User> {
+  async authenticate(@Body() loginDto: LoginUserDto): Promise<User> {
     const user = await this.authService.login(loginDto);
     // Normally you would send a verification email with the token here
 
