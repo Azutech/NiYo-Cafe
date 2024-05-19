@@ -10,6 +10,4 @@ export class JWTService {
     const payload = { sub: user._id, username: user.email };
     return this.jwtService.sign(payload);
   }
-
-
 }

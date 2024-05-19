@@ -1,4 +1,10 @@
-import { Injectable, HttpException, NotFoundException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  NotFoundException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, Status } from 'src/users/model/users';
@@ -9,7 +15,7 @@ import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { JWTService } from 'src/jwt/jwt.token';
 import { LoginResponseDto } from 'src/users/dto/loginResponse';
-
+import { ActivationResponse } from '../clientresponse/clientResponse';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +27,6 @@ export class AuthService {
     private userService: UsersService,
     private readonly jwtService: JWTService,
   ) {}
-
 
   async register(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -41,6 +46,7 @@ export class AuthService {
         password: hashedPassword,
         status: Status.Pending,
         verificationCode,
+        isVerified: false,
       });
 
       // Save the user to the database
@@ -87,14 +93,13 @@ export class AuthService {
         throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
       }
 
-      const token = await this.jwtService.generateToken(findUser)
+      const token = await this.jwtService.generateToken(findUser);
 
-      const user : LoginResponseDto = {
-        token : token,
-        email : findUser.email
-      }
-        return user
-
+      const user: LoginResponseDto = {
+        token: token,
+        email: findUser.email,
+      };
+      return user;
     } catch (err) {
       this.logger.error(err.message, err.stack);
 
@@ -103,25 +108,34 @@ export class AuthService {
     }
   }
 
-  async accountActivation(code: string): Promise<User> {
+  async accountActivation(code: string): Promise<ActivationResponse> {
     try {
       const findCode = await this.userService.findByCode(code);
-    if (!findCode) {
-      throw new NotFoundException('Verification Code not found',);
-    }
+      if (!findCode) {
+        throw new NotFoundException('Verification Code not found');
+      }
 
-    const findUser = await this.userService.findOne(findCode?._id) 
-    if (! findUser) {
-      throw new NotFoundException('Verification Code not found',);
-    }
+      const verifiedUser = await this.userService.activateAccount(
+        findCode?._id,
+        findCode?.status,
+        code,
+        true,
+      );
 
-    const verifiedUser = await this.userService.activateAccount(findUser._id, findUser.status, findUser.verificationCode);
+      if (!verifiedUser) {
+        throw new HttpException(
+          'Unable to Activate account',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    if (!verifiedUser) {
-			throw new HttpException('Unable to Activate account', HttpStatus.BAD_REQUEST );
-		}
-
-    return findUser;
+      return {
+        message: 'Account activated successfully',
+        user: {
+          isVerified: true,
+          status: 'Active',
+        },
+      };
     } catch (err) {
       this.logger.error(err?.message, err?.stack);
     }
