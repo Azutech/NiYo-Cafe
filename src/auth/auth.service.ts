@@ -16,6 +16,8 @@ import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { JWTService } from 'src/jwt/jwt.token';
 import { LoginResponseDto } from 'src/users/dto/loginResponse';
 import { ActivationResponse } from '../clientresponse/clientResponse';
+// import { UserGateway } from 'src/websocket/user.gateway';
+
 
 @Injectable()
 export class AuthService {
@@ -26,9 +28,10 @@ export class AuthService {
     private passwordService: PasswordService,
     private userService: UsersService,
     private readonly jwtService: JWTService,
+    // private userGateway: UserGateway
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
+  async register(createUserDto: CreateUserDto): Promise<Partial<User>> {
     try {
       const { fullName, email, password, gender } = createUserDto;
 
@@ -61,7 +64,15 @@ export class AuthService {
 
       // Here you would send the verification email with the token
       // For demonstration, we just return the user with the token
-      return createdUser;
+
+
+      // this.userGateway.handleUserCreation({ email : createdUser.email, status: createdUser.status})
+
+
+      return {
+        email: createdUser.email,
+        status: createdUser.status,
+      };
     } catch (err) {
       // Log error message and stack trace
       this.logger.error(err.message, err.stack);

@@ -31,24 +31,26 @@ export class TaskController {
     return this.taskService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('userTasks')
   async getTasksForUser(@Req() req) {
     const user = req.user; // Assuming user is attached to the request object by the AuthGuard
     return this.taskService.getTasksForUser(user._id);
   }
-
+  
+@UseGuards(JwtAuthGuard)
   @Get('getTask')
-  findOne(@Query('id') id: string) {
+  async findOne(@Query('id') id: string) {
     return this.taskService.findOne(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('updateTask')
   async update(@Query('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.taskService.update(id, updateTaskDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete('deleteTask')
   async remove(@Query('id') id: string) {
     return this.taskService.remove(id);

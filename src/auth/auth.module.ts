@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from '../jwt/jwtStrategy';
 import { JWTService } from 'src/jwt/jwt.token';
+// import { UserGateway } from 'src/websocket/user.gateway';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { JWTService } from 'src/jwt/jwt.token';
   ],
 
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, PasswordService, JWTService],
+  providers: [AuthService, JwtStrategy, PasswordService, JWTService,] //UserGateway],
 })
 export class AuthModule {}
