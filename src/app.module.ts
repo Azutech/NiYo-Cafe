@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
+import { GatewayModule } from './websocket/gateway.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TaskModule } from './task/task.module';
     UsersModule,
     AuthModule,
     TaskModule,
+  
   ],
   controllers: [AppController],
   providers: [AppService],

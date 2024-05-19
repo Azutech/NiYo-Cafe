@@ -18,7 +18,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<Partial<User>> {
     const user = await this.authService.register(createUserDto);
     // Normally you would send a verification email with the token here
 

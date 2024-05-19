@@ -50,7 +50,7 @@ export class TaskService {
     try {
       const tasks = await this.taskModel.find().exec();
 
-      if (!tasks) {
+      if (!tasks || tasks.length === 0) {
         throw new HttpException(
           'Task can not be retrieved',
           HttpStatus.BAD_REQUEST,
@@ -68,7 +68,7 @@ export class TaskService {
     try {
       const tasks = await this.taskModel.find({ user: userId }).exec();
 
-      if (!tasks) {
+      if (!tasks || tasks.length === 0) {
         throw new HttpException(
           'Task can not be retrieved',
           HttpStatus.BAD_REQUEST,
@@ -84,7 +84,7 @@ export class TaskService {
 
   async findOne(userId: string) {
     try {
-      const tasks = await this.taskModel.find({ user: userId }).exec();
+      const tasks = await this.taskModel.findOne({ _id : userId }).exec();
 
       if (!tasks) {
         throw new HttpException(
