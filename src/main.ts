@@ -12,11 +12,10 @@ async function bootstrap() {
   //  app.setGlobalPrefix('/api/v1');
 
   app.useGlobalPipes(
-    new ValidationPipe({whitelist: true, forbidNonWhitelisted: true})
-  )
-
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
 
   await app.listen(port, () => logger.log(`App running on Port: ${port}`));
 }
 
-bootstrap()
+bootstrap();
