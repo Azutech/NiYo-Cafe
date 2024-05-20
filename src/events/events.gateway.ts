@@ -42,7 +42,12 @@ export class EventsGateway
     this.server.emit('taskUpdated', updatedTask);
   }
 
-  emitTaskDeleted(deletedTask: string) {
+  emitTaskDeleted(deletedTask: any) {
     this.server.emit('taskDeleted', deletedTask);
+  }
+
+  emitUserCreated(userCreated: any) {
+    this.server.emit('userCreated', userCreated);
+
   }
 }

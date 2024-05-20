@@ -14,17 +14,24 @@ import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { LoginResponseDto } from 'src/users/dto/loginResponse';
 import { ActivationResponse } from '../clientresponse/clientResponse';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService,
+    private readonly eventGateway: EventsGateway
+  ) {}
 
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto): Promise<Partial<User>> {
     const user = await this.authService.register(createUserDto);
     // Normally you would send a verification email with the token here
 
-    return user;
+    const data = await this.eventGateway.emitUserCreated(user)
+
+    console.log(data)
+
+    return user
   }
 
   @Post('login')

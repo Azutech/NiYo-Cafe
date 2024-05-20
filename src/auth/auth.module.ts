@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from '../jwt/jwtStrategy';
 import { JWTService } from 'src/jwt/jwt.token';
+import { EventsModule } from 'src/events/events.module';
 // import { UserGateway } from 'src/websocket/user.gateway';
 
 @Module({
@@ -24,6 +25,7 @@ import { JWTService } from 'src/jwt/jwt.token';
 
     PassportModule.register({ defaultStrategy: 'jwt', session: false }),
     UsersModule,
+    EventsModule
   ],
 
   controllers: [AuthController],
