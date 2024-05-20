@@ -100,10 +100,15 @@ export class TaskService {
     }
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+  async updateCompleted(id: string): Promise<Task> {
     try {
+      const updateData = {
+        
+        isCompleted: true,
+        status : "Finished"
+      };
       const task = await this.taskModel
-        .findByIdAndUpdate(id, updateTaskDto, { new: true })
+        .findByIdAndUpdate(id, updateData, { new: true })
         .exec();
       if (!task) {
         throw new NotFoundException(`Task with ID ${id} not found`);
@@ -117,12 +122,15 @@ export class TaskService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{message : string}> {
     try {
       const result = await this.taskModel.findByIdAndDelete(id).exec();
       if (!result) {
         throw new NotFoundException(`Task with ID ${id} not found`);
       }
+
+      return { message: 'Task successfully deleted' };
+
     } catch (err) {
       this.logger.error(err.message, err.stack);
       // Rethrow the error to propagate it
