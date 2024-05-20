@@ -9,8 +9,10 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema }]),
     UsersModule,
+    
+    
   ],
   controllers: [TaskController],
-  providers: [TaskService],
+  providers: [TaskService,],
 })
 export class TaskModule {}
