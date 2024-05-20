@@ -14,16 +14,26 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtAuthGuard } from 'src/jwt/jwt.auth';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Controller('task')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly eventsGateway: EventsGateway,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('addTask')
   async create(@Body() createTaskDto: CreateTaskDto, @Req() req) {
     const user = req.user;
-    return this.taskService.createTask(createTaskDto, user._id);
+    const data =  await this.taskService.createTask(createTaskDto, user._id);
+
+    // Send events via web sockets
+    this.eventsGateway.emitTaskCreated(data)
+
+    return data
+     
   }
 
   @Get('/all')

@@ -108,6 +108,7 @@ export class TaskService {
       if (!task) {
         throw new NotFoundException(`Task with ID ${id} not found`);
       }
+
       return task;
     } catch (err) {
       this.logger.error(err.message, err.stack);
