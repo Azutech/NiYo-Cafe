@@ -27,6 +27,6 @@ import { JWTService } from 'src/jwt/jwt.token';
   ],
 
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, PasswordService, JWTService,] //UserGateway],
+  providers: [AuthService, JwtStrategy, PasswordService, JWTService], //UserGateway],
 })
 export class AuthModule {}

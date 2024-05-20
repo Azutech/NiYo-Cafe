@@ -18,7 +18,6 @@ import { LoginResponseDto } from 'src/users/dto/loginResponse';
 import { ActivationResponse } from '../clientresponse/clientResponse';
 // import { UserGateway } from 'src/websocket/user.gateway';
 
-
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -65,9 +64,7 @@ export class AuthService {
       // Here you would send the verification email with the token
       // For demonstration, we just return the user with the token
 
-
       // this.userGateway.handleUserCreation({ email : createdUser.email, status: createdUser.status})
-
 
       return {
         email: createdUser.email,

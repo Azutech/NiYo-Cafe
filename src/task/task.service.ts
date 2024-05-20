@@ -84,7 +84,7 @@ export class TaskService {
 
   async findOne(userId: string) {
     try {
-      const tasks = await this.taskModel.findOne({ _id : userId }).exec();
+      const tasks = await this.taskModel.findOne({ _id: userId }).exec();
 
       if (!tasks) {
         throw new HttpException(
