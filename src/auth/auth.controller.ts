@@ -4,7 +4,8 @@ import {
   Body,
   Get,
   Query,
-  NotFoundException,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -12,6 +13,7 @@ import { User } from 'src/users/model/users';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { LoginResponseDto } from 'src/users/dto/loginResponse';
 import { ActivationResponse } from '../clientresponse/clientResponse';
+import { JwtAuthGuard } from 'src/jwt/jwt.auth';
 
 @Controller('auth')
 export class AuthController {
@@ -42,5 +44,12 @@ export class AuthController {
     const activatedUser =
       await this.authService.accountActivation(verication_code);
     return activatedUser;
+  }
+
+  @UseGuards(JwtAuthGuard) // Protect the endpoint with JWT authentication
+  @Get('me')
+  async getMe(@Req() req): Promise<User> {
+    // Extract user information from the request
+    return req['user'];
   }
 }

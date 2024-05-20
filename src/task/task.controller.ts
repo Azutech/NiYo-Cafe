@@ -37,8 +37,8 @@ export class TaskController {
     const user = req.user; // Assuming user is attached to the request object by the AuthGuard
     return this.taskService.getTasksForUser(user._id);
   }
-  
-@UseGuards(JwtAuthGuard)
+
+  @UseGuards(JwtAuthGuard)
   @Get('getTask')
   async findOne(@Query('id') id: string) {
     return this.taskService.findOne(id);
