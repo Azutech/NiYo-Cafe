@@ -15,14 +15,14 @@ export class JWTService {
     return this.jwtService.sign(payload);
   }
 
-  async verifyToken(token: string): Promise<User> {
-    try {
-      const secretKey = this.configService.get<string>('JWT_SECRET'); // Retrieve secretKey from ConfigService
-      const decoded = this.jwtService.verify(token, { secret: secretKey });
-      return decoded as User;
-    } catch (err) {
-      // Token verification failed
-      throw new UnauthorizedException('Invalid token');
-    }
-  }
+  // async verifyToken(token: string): Promise<User> {
+  //   try {
+  //     const secretKey = this.configService.get<string>('JWT_SECRET'); // Retrieve secretKey from ConfigService
+  //     const decoded = this.jwtService.verify(token, { secret: secretKey });
+  //     return decoded as User;
+  //   } catch (err) {
+  //     // Token verification failed
+  //     throw new UnauthorizedException('Invalid token');
+  //   }
+  // }
 }

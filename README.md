@@ -92,6 +92,10 @@ To contribute to the project, you can:
 **Update a task**
 
 - PATCH /task/updateTask?id=<task_id>
+
+## PostMan Documentation
+
+ Click this [link](https://documenter.getpostman.com/view/19569197/2sA3QmEupR) to get the full API Documentation 
 ## License
 [MIT] ()
 The project is licensed under the MIT license.

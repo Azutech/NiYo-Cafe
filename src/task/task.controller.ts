@@ -45,7 +45,7 @@ export class TaskController {
   @Get('userTasks')
   async getTasksForUser(@Req() req) {
     const user = req.user; // Assuming user is attached to the request object by the AuthGuard
-    return this.taskService.getTasksForUser(user._id);
+    return this.taskService.getTasksForUser(user.userId);
   }
 
   @UseGuards(JwtAuthGuard)

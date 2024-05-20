@@ -64,7 +64,7 @@ export class TaskService {
     }
   }
 
-  async getTasksForUser(userId: string): Promise<Task[]> {
+  async getTasksForUser(userId: any): Promise<Task[]> {
     try {
       const tasks = await this.taskModel.find({ user: userId }).exec();
 
