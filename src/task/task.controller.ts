@@ -9,6 +9,7 @@ import {
   Req,
   Query,
   UseGuards,
+  Put
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -27,13 +28,12 @@ export class TaskController {
   @Post('addTask')
   async create(@Body() createTaskDto: CreateTaskDto, @Req() req) {
     const user = req.user;
-    const data =  await this.taskService.createTask(createTaskDto, user._id);
+    const data = await this.taskService.createTask(createTaskDto, user._id);
 
     // Send events via web sockets
-    this.eventsGateway.emitTaskCreated(data)
+    this.eventsGateway.emitTaskCreated(data);
 
-    return data
-     
+    return data;
   }
 
   @Get('/all')
@@ -55,14 +55,19 @@ export class TaskController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('updateTask')
-  async update(@Query('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(id, updateTaskDto);
+  @Put('updateTask/completed')
+  async update(@Query('id') id: string, ) {
+    const data = await this.taskService.updateCompleted(id);
+    this.eventsGateway.emitTaskUpdated(data);
+
+    return data;
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('deleteTask')
   async remove(@Query('id') id: string) {
-    return this.taskService.remove(id);
+    const data =  await this.taskService.remove(id);
+    this.eventsGateway.emitTaskUpdated(data);
+    return data;
   }
 }

@@ -7,7 +7,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import {ServerToClientEvents} from '../events/interfaces/events.interface'
+import { ServerToClientEvents } from '../events/interfaces/events.interface';
 
 @WebSocketGateway({
   namespace: 'events',
@@ -18,7 +18,7 @@ import {ServerToClientEvents} from '../events/interfaces/events.interface'
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server<any, ServerToClientEvents>
+  @WebSocketServer() server: Server<any, ServerToClientEvents>;
 
   afterInit(client: Socket) {
     console.log('WebSocket initialized');
@@ -33,11 +33,12 @@ export class EventsGateway
   }
 
   emitTaskCreated(newTask: any) {
-    console.log(newTask)
+    console.log(newTask);
     this.server.emit('taskCreated', newTask);
   }
 
   emitTaskUpdated(updatedTask: any) {
+    console.log(updatedTask);
     this.server.emit('taskUpdated', updatedTask);
   }
 
