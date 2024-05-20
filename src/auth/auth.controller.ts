@@ -50,6 +50,10 @@ export class AuthController {
   @Get('me')
   async getMe(@Req() req): Promise<User> {
     // Extract user information from the request
-    return req['user'];
+
+    console.log('Request user:', req.user); // Log the request user object
+
+    const user = req.user;
+    return user;
   }
 }
