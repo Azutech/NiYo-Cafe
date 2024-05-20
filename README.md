@@ -59,6 +59,41 @@ To contribute to the project, you can:
 
  **Login**
 
- POST /auth/login logs the user in
+ - POST /auth/login : logs the user in
+
+ **Registration**
+ - POST /auth/register : registers the users
+
+ **Account Activation**
+ - GET /auth/activateAccount?verication_code=<verication_code>: activate the user's account
 
 ### Tasks
+
+**Create a task**
+
+ - POST /task/addTask 
+
+ **Get all tasks**
+
+ - GET /task/all
+
+ **Get tasks for a user**
+
+ - GET /task/userTasks
+
+ **Get a specific task**
+
+ - GET /task/getTask?id=<task_id>
+
+ **Delete a task**
+
+- DELETE /task/deleteTask?id=<task_id>
+
+**Update a task**
+
+- PATCH /task/updateTask?id=<task_id>
+## License
+[MIT] ()
+The project is licensed under the MIT license.
+
+Copyright (c) [2023] [EmmanuelOnugha]
