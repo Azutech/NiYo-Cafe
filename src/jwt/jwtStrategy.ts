@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -15,4 +15,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     return { userId: payload.id, email: payload.email };
   }
+
+  async validateWithException(payload: any, done: VerifiedCallback) {
+    try {
+      const user = this.validate(payload);
+      done(null, user);
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        done(new UnauthorizedException('Token expired'), false);
+      } else {
+        done(error, false);
+      }
+    }
+  }
+
+  authenticate(req: any, options?: any): void {
+    super.authenticate(req, options);
+  }
 }
+
